@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Architecture Items</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            font-family: 'Exo', sans-serif;
+            margin: 0;
+            background: #4e54c8;
+            background: -webkit-linear-gradient(to left, #8f94fb, #4e54c8);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            overflow: hidden;
+        }
+
+        .context {
+            width: 100%;
+            position: relative;
+            top: 0;
+            z-index: 1;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .context h1 {
+            text-align: center;
+            color: #fff;
+            font-size: 50px;
+        }
+
+        .area {
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .circles li:nth-child(1) {
+            left: 25%;
+            width: 80px;
+            height: 80px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(2) {
+            left: 10%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .circles li:nth-child(3) {
+            left: 70%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 4s;
+        }
+
+        .circles li:nth-child(4) {
+            left: 40%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 0s;
+            animation-duration: 18s;
+        }
+
+        .circles li:nth-child(5) {
+            left: 65%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .circles li:nth-child(6) {
+            left: 75%;
+            width: 110px;
+            height: 110px;
+            animation-delay: 3s;
+        }
+
+        .circles li:nth-child(7) {
+            left: 35%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 7s;
+        }
+
+        .circles li:nth-child(8) {
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            animation-delay: 15s;
+            animation-duration: 45s;
+        }
+
+        .circles li:nth-child(9) {
+            left: 20%;
+            width: 15px;
+            height: 15px;
+            animation-delay: 2s;
+            animation-duration: 35s;
+        }
+
+        .circles li:nth-child(10) {
+            left: 85%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 0s;
+            animation-duration: 11s;
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            max-width: 1200px;
+            width: 90%;
+            margin-top: 80px;
+            position: relative;
+            z-index: 2;
+            justify-content: flex-start;
+        }
+
+        .product-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 200px;
+            height: 200px;
+            margin-right: 0;
+        }
+
+        .product-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-box img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+
+        .product-box h2 {
+            font-size: 1em;
+            margin: 0;
+        }
+
+        .product-details {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 1000;
+            width: 30%;
+            height: 60%;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .product-details h2 {
+            margin-bottom: 20px;
+            color: #6dd5ed;
+            text-align: center;
+        }
+
+        .product-details p {
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .product-details .price {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffeb3b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .product-details button {
+            background-color: #6dd5ed;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            display: block;
+            margin: 20px auto 0;
+            margin-bottom: 0px;
+        }
+
+        .product-details button:hover {
+            background-color: #2193b0;
+        }
+
+        .product-details .product-photos {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .product-details .product-photos img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .image-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .image-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1em;
+        }
+
+        #backButton:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="area">
+        <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="context">
+        <h1>Architecture Items for Sale</h1>
+    </div>
+    <button id="backButton">Back</button>
+    <div class="product-grid" id="productGrid">
+    </div>
+
+    <div class="product-details" id="productDetails">
+        <h2 id="detailName"></h2>
+        <div class="product-photos" id="detailPhotos"></div>
+        <p id="detailQuality"></p>
+        <p class="price" id="detailPrice"></p>
+        <button id="buyButton">Buy Now</button>
+    </div>
+
+    <div class="image-overlay" id="imageOverlay">
+        <img id="overlayImage" src="" alt="Full Image">
+    </div>
+
+    <script>
+const productGrid = document.getElementById('productGrid');
+const productDetails = document.getElementById('productDetails');
+const detailName = document.getElementById('detailName');
+const detailPhotos = document.getElementById('detailPhotos');
+const detailQuality = document.getElementById('detailQuality');
+const detailPrice = document.getElementById('detailPrice');
+const buyButton = document.getElementById('buyButton');
+const imageOverlay = document.getElementById('imageOverlay');
+const overlayImage = document.getElementById('overlayImage');
+const backButton = document.getElementById('backButton');
+
+function displayProducts() {
+    productGrid.innerHTML = '';
+    const storedProducts = JSON.parse(localStorage.getItem('architectureProducts')) || [];
+
+    if (storedProducts.length > 0) {
+        storedProducts.forEach(product => {
+            const productBox = document.createElement('div');
+            productBox.classList.add('product-box');
+            productBox.innerHTML = `
+                <img src="${product.photo1}" alt="${product.name}">
+                <h2>${product.name}</h2>
+            `;
+
+            productBox.addEventListener('click', () => {
+                detailName.textContent = product.name;
+                detailPhotos.innerHTML = `
+                    <img src="${product.photo1}" alt="Photo 1" data-src="${product.photo1}">
+                    <img src="${product.photo2}" alt="Photo 2" data-src="${product.photo2}">
+                `;
+                detailQuality.textContent = `Quality: ${product.quality}`;
+                detailPrice.textContent = `Price: $${product.price}`;
+
+                buyButton.addEventListener('click', function() {
+                    window.location.href = `mailto:${product.email}?subject=Willing to buy your ${product.name} listed on Campus Marketplace`;
+                });
+                productDetails.style.display = 'block';
+
+                detailPhotos.querySelectorAll('img').forEach(img => {
+                    img.addEventListener('click', () => {
+                        overlayImage.src = img.getAttribute('data-src');
+                        imageOverlay.style.display = 'flex';
+                    });
+                });
+            });
+
+            productGrid.appendChild(productBox);
+        });
+    } else {
+        productGrid.innerHTML = '<p>No products available.</p>';
+    }
+}
+
+displayProducts();
+
+productDetails.addEventListener('click', (event) => {
+    if (event.target === productDetails) {
+        productDetails.style.display = 'none';
+    }
+});
+
+imageOverlay.addEventListener('click', () => {
+    imageOverlay.style.display = 'none';
+});
+
+backButton.addEventListener('click', () => {
+    window.location.href = 'dashboard.html';
+});
+</script>
+</body>
+
+</html>

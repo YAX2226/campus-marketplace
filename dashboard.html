@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Categories</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+
+        .category-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .category {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: flex 0.3s ease-in-out;
+            cursor: pointer;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .category:hover {
+            flex: 1.2;
+        }
+
+        #architecture {
+            background-image: url('architecture.jpg');
+        }
+
+        #engineering {
+            background-image: url('engineering.jpg');
+        }
+
+        #pharmacy {
+            background-image: url('pharmacy.jpg');
+        }
+
+        .category .buttons {
+            display: flex;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 20px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .category.active .buttons {
+            opacity: 1;
+        }
+
+        .category .buttons a {
+            background-color: transparent;
+            border: 3px solid white;
+            color: white;
+            padding: 10px 80px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+            text-decoration: none;
+        }
+
+        .category .buttons a:hover {
+            background-color: white;
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="category-container">
+        <div class="category" id="architecture">
+            Architecture
+            <div class="buttons">
+                <a href="architecture_buy.html">Buy</a>
+                <a href="architecture_sell.html">Sell</a>
+            </div>
+        </div>
+        <div class="category" id="engineering">
+            Engineering
+            <div class="buttons">
+                <a href="engineering_buy.html">Buy</a>
+                <a href="engineering_sell.html">Sell</a>
+            </div>
+        </div>
+        <div class="category" id="pharmacy">
+            Pharmacy
+            <div class="buttons">
+                <a href="pharmacy_buy.html">Buy</a>
+                <a href="pharmacy_sell.html">Sell</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = document.querySelectorAll('.category');
+
+        categories.forEach(category => {
+            category.addEventListener('click', function() {
+                categories.forEach(c => {
+                    if (c !== this) {
+                        c.classList.remove('active');
+                    }
+                });
+                this.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>

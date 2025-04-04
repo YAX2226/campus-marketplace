@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Architecture Item</title>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container:hover, .container:active {
+            .top:before, .top:after, .bottom:before, .bottom:after {
+                margin-left: 200px;
+                transform-origin: -325px 50%;
+                transition-delay: 0s;
+            }
+
+            .center {
+                opacity: 1;
+                transition-delay: 0.2s;
+            }
+        }
+
+        .top, .bottom {
+            &:before, &:after {
+                content: '';
+                display: block;
+                position: absolute;
+                width: 200vmax;
+                height: 200vmax;
+                top: 50%;
+                left: 50%;
+                margin-top: -100vmax;
+                transform-origin: 0 50%;
+                transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+                z-index: 10;
+                opacity: 0.65;
+                transition-delay: 0.2s;
+            }
+        }
+
+        .top:before {
+            transform: rotate(80deg);
+            background: #e46569;
+        }
+
+        .top:after {
+            transform: rotate(125deg);
+            background: #ecaf81;
+        }
+
+        .bottom:before {
+            transform: rotate(-80deg);
+            background: #60b8d4;
+        }
+
+        .bottom:after {
+            transform: rotate(-125deg);
+            background: #3745b5;
+        }
+
+        .center {
+            width: 400px;
+            padding: 30px;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+            transition-delay: 0s;
+            color: #333;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 11;
+        }
+
+        .center input, .center select, .center textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+        }
+
+        .center button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            background-color: #3745b5;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .center button:hover {
+            background-color: #2a358c;
+        }
+
+        .profile-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 36px;
+            color: #333;
+            z-index: 22;
+        }
+
+        .profile-dropdown {
+            position: fixed;
+            top: 60px;
+            right: 15px;
+            background-color: transparent;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            display: none;
+            z-index: 13;
+        }
+
+        .profile-dropdown button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 5px;
+            padding: 8px 10px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-dropdown button:hover {
+            background-color: rgb(112, 108, 108);
+            color: white;
+        }
+
+        #logout {
+            color: #ffffff;
+            text-align: center;
+        }
+
+        #logout:hover {
+            background-color: rgb(112, 108, 108);
+            color: white;
+        }
+
+        .center .add-item-button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+
+        .center .add-item-button:hover {
+            background-color: #218838;
+        }
+
+        .center .back-button {
+            margin-top: 10px;
+            background-color: #6c757d;
+        }
+
+        .center .back-button:hover {
+            background-color: #5a6268;
+        }
+
+        .center.swapping {
+            animation: swapAnimation 0.5s ease-in-out forwards;
+        }
+
+        @keyframes swapAnimation {
+            0% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            51% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .listed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: red;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .remove-item::before {
+            content: "\274C"; /* Unicode for X symbol */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top"></div>
+        <div class="bottom"></div>
+        <div class="center">
+            <h2>Sell Architecture Item</h2>
+            <form id="sellForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="price">Price:</label>
+                <input type="number" id="price" name="price" required>
+                <label for="quality">Quality:</label>
+                <select id="quality" name="quality" required>
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
+                </select>
+                <label for="photos">Photos (at least 2):</label>
+                <input type="file" id="photo1" name="photo1" accept="image/*" required>
+                <input type="file" id="photo2" name="photo2" accept="image/*" required>
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+                <button id="nextButton" type="submit">Next</button>
+                <button type="button" class="add-item-button" id="addItemButton">Add Another Item</button>
+                <button type="button" class="back-button" id="backButton">Back</button>
+            </form>
+        </div>
+    </div>
+
+    <button class="profile-button">&#9786;</button>
+    <div class="profile-dropdown">
+        <button id="listedItems">Listed Items</button>
+        <button id="removeItems">Remove Items</button>
+        <button id="logout">Logout</button>
+    </div>
+
+    <script>
+        const centerDiv = document.querySelector('.center');
+        const addItemButton = document.getElementById('addItemButton');
+        const backButton = document.getElementById('backButton');
+        const nextButton = document.getElementById('nextButton');
+        const nameInput = document.getElementById('name');
+        const priceInput = document.getElementById('price');
+        const qualitySelect = document.getElementById('quality');
+        const photo1Input = document.getElementById('photo1');
+        const photo2Input = document.getElementById('photo2');
+        const emailInput = document.getElementById('email');
+        const sellForm = document.getElementById('sellForm');
+
+        let itemList = JSON.parse(localStorage.getItem('architectureProducts')) || [];
+
+        function clearForm() {
+            nameInput.value = '';
+            priceInput.value = '';
+            qualitySelect.value = 'new';
+            photo1Input.value = '';
+            photo2Input.value = '';
+            emailInput.value = '';
+        }
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function processPhoto(fileInput) {
+            if (fileInput.files[0]) {
+                return await getBase64(fileInput.files[0]);
+            }
+            return '';
+        }
+
+        async function createProduct() {
+            const photo1DataPromise = processPhoto(photo1Input);
+            const photo2DataPromise = processPhoto(photo2Input);
+            const [photo1Data, photo2Data] = await Promise.all([photo1DataPromise, photo2DataPromise]);
+
+            return {
+                name: nameInput.value,
+                price: priceInput.value,
+                quality: qualitySelect.value,
+                email: emailInput.value,
+                photo1: photo1Data,
+                photo2: photo2Data
+            };
+        }
+
+        nextButton.addEventListener('click', async function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const product = await createProduct();
+        itemList.push(product);
+        localStorage.setItem('architectureProducts', JSON.stringify(itemList));
+        window.location.href = 'architecture_buy.html';
+    });
+
+        addItemButton.addEventListener('click', async function() {
+            const product = await createProduct();
+            itemList.push(product);
+            localStorage.setItem('architectureProducts', JSON.stringify(itemList));
+
+            centerDiv.classList.add('swapping');
+            setTimeout(() => {
+                centerDiv.classList.remove('swapping');
+                clearForm();
+            }, 500);
+
+            alert('Item added! Add another or click Next to finish.');
+        });
+
+        backButton.addEventListener('click', function() {
+            window.location.href = 'dashboard.html';
+        });
+
+        // Profile dropdown logic
+        const profileButton = document.querySelector('.profile-button');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+
+        profileButton.addEventListener('mouseover', () => {
+            profileDropdown.style.display = 'block';
+        });
+
+        profileButton.addEventListener('mouseout', () => {
+            profileDropdown.style.display = 'none';
+        });
+
+        profileDropdown.addEventListener('mouseover', () => {
+            profileDropdown.style.display = 'block';
+        });
+
+        profileDropdown.addEventListener('mouseout', () => {
+            profileDropdown.style.display = 'none';
+        });
+
+        const listedItemsDiv = document.getElementById('listedItems');
+        const removeItemsDiv = document.getElementById('removeItems');
+
+        listedItemsDiv.addEventListener('click', () => {
+            const listedItems = JSON.parse(localStorage.getItem('architectureProducts')) || [];
+            let message = "Listed Items:\n";
+            if (listedItems.length === 0) {
+                message += "No items listed yet.";
+            } else {
+                listedItems.forEach((item, index) => {
+                    message += `${index + 1}. ${item.name}\n`;
+                });
+                message += `Total: ${listedItems.length}`;
+            }
+            alert(message);
+        });
+
+        removeItemsDiv.addEventListener('click', () => {
+            const listedItems = JSON.parse(localStorage.getItem('architectureProducts')) || [];
+            if (listedItems.length === 0) {
+                alert("No items listed yet.");
+                return;
+            }
+
+            let message = "Select an item to remove:\n";
+            listedItems.forEach((item, index) => {
+                message += `${index + 1}. ${item.name}\n`;
+            });
+
+            const itemToRemove = prompt(message + "Enter the number of the item to remove:");
+
+            if (itemToRemove !== null && !isNaN(itemToRemove)) {
+                const indexToRemove = parseInt(itemToRemove) - 1;
+                if (indexToRemove >= 0 && indexToRemove < listedItems.length) {
+                    if (confirm(`Are you sure you want to remove "${listedItems[indexToRemove].name}"?`)) {
+                        listedItems.splice(indexToRemove, 1);
+                        localStorage.setItem('architectureProducts', JSON.stringify(listedItems));
+                        alert("Item removed.");
+                    }
+                } else {
+                    alert("Invalid item number.");
+                }
+            }
+        });
+
+        document.getElementById('logout').addEventListener('click', () => {
+            alert("logout clicked");
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
