@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -21,4 +23,5 @@ urlpatterns = [
     path('pharmacy_buy.html', views.pharmacy_buy),
     path('pharmacy/sell/', views.pharmacy_sell, name='pharmacy_sell'),
     path('pharmacy_sell.html', views.pharmacy_sell),
-]
+    path('api/products/', views.product_list, name='product_list'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

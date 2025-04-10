@@ -402,33 +402,71 @@
             };
         }
 
+        function getCSRFToken() {
+        const cookieValue = document.cookie.split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+        return cookieValue;
+    }
+
         nextButton.addEventListener('click', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+    event.preventDefault(); // Prevent default form submission
 
-            if (!nameInput.value.trim() || !priceInput.value.trim() || !photo1Input.files[0] || !photo2Input.files[0] || !emailInput.value.trim()) {
-                alert('Please fill in all the required fields (Name, Price, both Photos, and Email).');
-                return;
-            }
+    if (!nameInput.value.trim() || !priceInput.value.trim() || !photo1Input.files[0] || !photo2Input.files[0] || !emailInput.value.trim()) {
+        alert('Please fill in all the required fields (Name, Price, both Photos, and Email).');
+        return;
+    }
 
-            const product = await createProduct();
-            itemList.push(product);
-            localStorage.setItem('pharmacyProducts', JSON.stringify(itemList));
-            window.location.href = 'pharmacy_buy.html';
-        });
+    const product = await createProduct();
 
-        addItemButton.addEventListener('click', async function() {
-            const product = await createProduct();
-            itemList.push(product);
-            localStorage.setItem('pharmacyProducts', JSON.stringify(itemList));
+    // Save to localStorage (optional if you're transitioning to backend only)
+    itemList.push(product);
+    localStorage.setItem('engineeringProducts', JSON.stringify(itemList));
 
-            centerDiv.classList.add('swapping');
-            setTimeout(() => {
-                centerDiv.classList.remove('swapping');
-                clearForm();
-            }, 500);
+    // Send to Django backend
+    fetch('/api/products/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()  // Make sure to define this function!
+        },
+        body: JSON.stringify(product)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to save product.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Product saved:', data);
+        window.location.href = 'pharmacy_buy.html';  // Move only after successful POST
+    })
+    .catch(error => {
+        console.error('Error saving product:', error);
+        alert("Failed to save product to server.");
+    });
+});
 
-            alert('Item added! Add another or click Next to finish.');
-        });
+
+addItemButton.addEventListener('click', async function () {
+    if (!nameInput.value.trim() || !priceInput.value.trim() || !photo1Input.files[0] || !photo2Input.files[0] || !emailInput.value.trim()) {
+        alert('Please fill in all the required fields (Name, Price, both Photos, and Email).');
+        return;
+    }
+
+    const product = await createProduct();
+    itemList.push(product);
+    localStorage.setItem('pharmacyProducts', JSON.stringify(itemList));
+
+    centerDiv.classList.add('swapping');
+    setTimeout(() => {
+        centerDiv.classList.remove('swapping');
+        clearForm();
+    }, 500);
+
+    alert('Item added! Add another or click Next to finish.');
+});
 
         backButton.addEventListener('click', function() {
             window.location.href = 'dashboard.html';

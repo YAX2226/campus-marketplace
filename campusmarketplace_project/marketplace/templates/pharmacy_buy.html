@@ -420,10 +420,24 @@
         const dashboardLink = document.getElementById('dashboardLink');
     
     
-        let allProducts = JSON.parse(localStorage.getItem('pharmacyProducts')) || [];
-        let displayedProducts = [...allProducts];
-        let currentProduct = null;
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let localProducts = JSON.parse(localStorage.getItem('pharmacyProducts')) || [];
+let allProducts = [];
+let displayedProducts = [];
+
+fetch('/api/products/')
+    .then(response => response.json())
+    .then(data => {
+        allProducts = [...data, ...localProducts];  // merge backend + local
+        displayedProducts = [...allProducts];
+        displayProducts(displayedProducts);
+    })
+    .catch(error => {
+        // if backend fails, fall back to local only
+        console.error('Error fetching products:', error);
+        allProducts = [...localProducts];
+        displayedProducts = [...allProducts];
+        displayProducts(displayedProducts);
+    });
     
         function updateCartDisplay() {
             cartCount.textContent = cart.length;
@@ -436,9 +450,8 @@
                     const productBox = document.createElement('div');
                     productBox.classList.add('product-box');
                     productBox.innerHTML = `
-                        <div class="product-image-container">
-                            <img src="${product.photo1}" alt="${product.name}">
-                        </div>
+                       <div class="product-image-container" style="background-image: url('${product.photo1}'); background-size: contain; background-repeat: no-repeat; background-position: center;">
+                         </div>
                         <div class="product-info">
                             <h2>${product.name}</h2>
                             <p class="quality">Quality: ${product.quality}</p>
