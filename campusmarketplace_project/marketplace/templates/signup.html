@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - CampusMarketPlace</title>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Raleway', sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container:hover, .container:active {
+            .top:before, .top:after, .bottom:before, .bottom:after {
+                margin-left: 200px;
+                transform-origin: -200px 50%;
+                transition-delay: 0s;
+            }
+
+            .center {
+                opacity: 1;
+                transition-delay: 0.2s;
+            }
+        }
+
+        .top, .bottom {
+            &:before, &:after {
+                content: '';
+                display: block;
+                position: absolute;
+                width: 200vmax;
+                height: 200vmax;
+                top: 50%;
+                left: 50%;
+                margin-top: -100vmax;
+                transform-origin: 0 50%;
+                transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+                z-index: 10;
+                opacity: 0.65;
+                transition-delay: 0.2s;
+            }
+        }
+
+        .top:before {
+            transform: rotate(45deg);
+            background: #e46569;
+        }
+
+        .top:after {
+            transform: rotate(135deg);
+            background: #ecaf81;
+        }
+
+        .bottom:before {
+            transform: rotate(-45deg);
+            background: #60b8d4;
+        }
+
+        .bottom:after {
+            transform: rotate(-135deg);
+            background: #3745b5;
+        }
+
+        .center {
+            width: 400px;
+            padding: 30px;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.445, 0.05, 0, 1);
+            transition-delay: 0s;
+            color: #333;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 11;
+        }
+
+        .center input {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+        }
+
+        .center button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            background-color: #3745b5;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .center button:hover {
+            background-color: #2a358c;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top"></div>
+        <div class="bottom"></div>
+        <div class="center">
+            <h2>Signup</h2>
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="password" id="rePassword" placeholder="Re-enter Password" required>
+            <p class="error-message" id="errorMessage"></p>
+            <button id="signupButton">Next</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupButton').addEventListener('click', function() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rePassword = document.getElementById('rePassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (password !== rePassword) {
+                errorMessage.textContent = "Passwords do not match.";
+                return;
+            }
+
+            if (password.length < 6) {
+                errorMessage.textContent = "Password must be at least 6 characters long.";
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = "Invalid email format.";
+                return;
+            }
+
+            // Store signup details in local storage
+            localStorage.setItem('email', email);
+            localStorage.setItem('password', password);
+
+            // Redirect to login.html
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusMarketPlace</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+        }
+
+        .title-3d {
+            font-size: 0;
+            font-weight: 600;
+            color: #37474F;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            animation: expandTitle 2s ease-out forwards;
+        }
+
+        @keyframes expandTitle {
+            0% { font-size: 0; opacity: 0; }
+            50% { font-size: 2em; opacity: 0.7;}
+            100% { font-size: 3em; opacity: 1;}
+        }
+
+        .description {
+            margin-top: -20px;
+            font-size: 1.1em;
+            color: #546E7A;
+            max-width: 600px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards 2s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .auth-buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards 2.5s;
+        }
+
+        .auth-button {
+            padding: 12px 25px;
+            font-size: 1em;
+            border: 1px solid #607D8B;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: transparent;
+            color: #607D8B;
+        }
+
+        .auth-button:hover {
+            background-color: #ECEFF1;
+        }
+
+        .background-campus {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: url('static/images/1.jpg') center/cover no-repeat; /* Replace with your image */
+            opacity: 0.40;
+            animation: panCampus 20s linear infinite alternate;
+        }
+
+
+        @keyframes panCampus {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-campus"></div>
+
+    <div class="container">
+        <h1 class="title-3d">CAMPUS MARKETPLACE</h1>
+        <p class="description">
+            Connect with your campus community to buy and sell items efficiently.
+        </p>
+        <div class="auth-buttons">
+            <a href="login.html" button class="auth-button">Login</button></a>
+            <a href="signup.html" button class="auth-button">Signup</button></a>
+        </div>
+    </div>
+
+</body>
+</html>
