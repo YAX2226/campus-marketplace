@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Product
+from .models import Product,Category
 from django.http import JsonResponse
 
 
@@ -16,21 +16,33 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 def architecture_buy(request):
-    products = Product.objects.filter(category='Architecture')
+    try:
+        category = Category.objects.get(name='architecture')
+        products = Product.objects.filter(category=category)
+    except Category.DoesNotExist:
+        products = []  # or handle error
     return render(request, 'architecture_buy.html', {'products': products})
 
 def architecture_sell(request):
     return render(request, 'architecture_sell.html')
 
 def engineering_buy(request):
-    products = Product.objects.filter(category='Engineering')
+    try:
+        category = Category.objects.get(name='engineering')
+        products = Product.objects.filter(category=category)
+    except Category.DoesNotExist:
+        products = []  # or handle error
     return render(request, 'engineering_buy.html', {'products': products})
 
 def engineering_sell(request):
     return render(request, 'engineering_sell.html')
 
 def pharmacy_buy(request):
-    products = Product.objects.filter(category='Pharmacy')
+    try:
+        category = Category.objects.get(name='pharmacy')
+        products = Product.objects.filter(category=category)
+    except Category.DoesNotExist:
+        products = []  # or handle error
     return render(request, 'pharmacy_buy.html', {'products': products})
 
 def pharmacy_sell(request):
@@ -48,6 +60,6 @@ def product_list(request):
             'photo1': product.photo1.url if product.photo1 else '',
             'photo2': product.photo2.url if product.photo2 else '',
             'email': product.email,
-            'category': product.category
+            'category': product.category.name
         })
     return JsonResponse(data, safe=False)
