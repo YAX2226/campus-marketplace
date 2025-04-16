@@ -349,7 +349,6 @@
 <body>
     <header class="header">
         <div class="logo-container" id="dashboardLink">
-            <span class="back-logo">&#11013;</span>
             <div class="logo-text">Architecture Campus</div>
         </div>
         <div class="search-bar">
@@ -420,23 +419,30 @@
         const dashboardLink = document.getElementById('dashboardLink');
     
     
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let localProducts = JSON.parse(localStorage.getItem('architectureProducts')) || [];
 let allProducts = [];
 let displayedProducts = [];
+let currentProduct = null;
 
-fetch('/api/products/')
+const category = 'Architecture';
+
+fetch('/api/products/?category=Architecture')
     .then(response => response.json())
     .then(data => {
         allProducts = [...data, ...localProducts];  // merge backend + local
         displayedProducts = [...allProducts];
         displayProducts(displayedProducts);
+        updateCartDisplay();
     })
     .catch(error => {
         // if backend fails, fall back to local only
         console.error('Error fetching products:', error);
-        allProducts = [...localProducts];
+        console.log('Local Products:', localProducts);
+        allProducts = [...(localProducts || [])];
         displayedProducts = [...allProducts];
         displayProducts(displayedProducts);
+        updateCartDisplay();
     });
     
         function updateCartDisplay() {
@@ -470,6 +476,15 @@ fetch('/api/products/')
                         detailQuality.textContent = `Quality: ${product.quality}`;
                         detailPrice.textContent = `Price: ₹${product.price}`;
                         productDetails.style.display = 'block';
+
+                        // Add event listeners for zooming on detail photos
+                        const detailPhotoImages = detailPhotos.querySelectorAll('img');
+                        detailPhotoImages.forEach(img => {
+                            img.addEventListener('click', () => {
+                                overlayImage.src = img.dataset.src;
+                                imageOverlay.style.display = 'flex';
+                            });
+                        });
                     });
     
                     productGrid.appendChild(productBox);
@@ -503,9 +518,6 @@ fetch('/api/products/')
             cartSubtotal.textContent = `Subtotal: ₹${subtotal.toFixed(2)}`;
         }
     
-        updateCartDisplay();
-        displayProducts(displayedProducts);
-    
         productDetails.addEventListener('click', (event) => {
             if (event.target === productDetails) {
                 productDetails.style.display = 'none';
@@ -528,62 +540,104 @@ fetch('/api/products/')
             }
         });
     
-        addToCartButton.addEventListener('click', () => {
-            if (currentProduct) {
-                cart.push(currentProduct);
-                localStorage.setItem('cart', JSON.stringify(cart));
-                updateCartDisplay();
-                alert(`${currentProduct.name} added to cart!`);
-                productDetails.style.display = 'none';
-                currentProduct = null;
-            }
-        });
-    
-        contactSellerButton.addEventListener('click', () => {
-            if (currentProduct) {
-                window.location.href = `mailto:${currentProduct.email}?subject=Interest in your item: ${currentProduct.name} on Pharmacy Campus Marketplace`;
-            }
-        });
-    
-        cartIconContainer.addEventListener('click', () => {
-            renderCart();
-            cartModal.style.display = 'block';
-        });
-    
-        closeCartModal.addEventListener('click', () => {
-            cartModal.style.display = 'none';
-        });
-    
+        if (addToCartButton) {
+            addToCartButton.addEventListener('click', () => {
+                if (currentProduct) {
+                    cart.push(currentProduct);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartDisplay();
+                    alert(`${currentProduct.name} added to cart!`);
+                    productDetails.style.display = 'none';
+                    currentProduct = null;
+                }
+            });
+        } else {
+            console.error('addToCartButton element not found!');
+        }
+
+        if (contactSellerButton) {
+            contactSellerButton.addEventListener('click', () => {
+                if (currentProduct && currentProduct.email) {
+                    window.location.href = `mailto:${currentProduct.email}?subject=Interest in your item: ${currentProduct.name} on Architecture Campus Marketplace`;
+                } else {
+                    alert('Seller email not available for this item.');
+                }
+            });
+        } else {
+            console.error('contactSellerButton element not found!');
+        }
+
+        if (cartIconContainer) {
+            cartIconContainer.addEventListener('click', () => {
+                renderCart();
+                cartModal.style.display = 'block';
+            });
+        } else {
+            console.error('cartIconContainer element not found!');
+        }
+
+        if (closeCartModal) {
+            closeCartModal.addEventListener('click', () => {
+                cartModal.style.display = 'none';
+            });
+        } else {
+            console.error('closeCartModal element not found!');
+        }
+
         window.addEventListener('click', (event) => {
             if (event.target === cartModal) {
                 cartModal.style.display = 'none';
             }
         });
-    
-        checkoutButton.addEventListener('click', () => {
-            if (cart.length > 0) {
-                alert(`Proceeding to checkout with ${cart.length} items. Subtotal: ₹${document.getElementById('cartSubtotal').textContent}`);
-                // In a real application, you would redirect to a checkout page
-                localStorage.removeItem('cart');
-                cart = [];
-                updateCartDisplay();
+
+        if (checkoutButton) {
+            checkoutButton.addEventListener('click', () => {
+                if (cart.length > 0) {
+                    alert(`Proceeding to checkout with ${cart.length} items. Subtotal: ₹${document.getElementById('cartSubtotal').textContent}`);
+                    localStorage.removeItem('cart');
+                    cart = [];
+                    updateCartDisplay();
+                    cartModal.style.display = 'none';
+                } else {
+                    alert('Your cart is empty.');
+                }
+            });
+        } else {
+            console.error('checkoutButton element not found!');
+        }
+
+        if (backToProductsButton) {
+            backToProductsButton.addEventListener('click', () => {
+                productDetails.style.display = 'none';
+            });
+        } else {
+            console.error('backToProductsButton element not found!');
+        }
+
+        if (backToProductsButtonCart) {
+            backToProductsButtonCart.addEventListener('click', () => {
                 cartModal.style.display = 'none';
-            } else {
-                alert('Your cart is empty.');
-            }
-        });
-    
-        backToProductsButton.addEventListener('click', () => {
-            productDetails.style.display = 'none';
-        });
-    
-        backToProductsButtonCart.addEventListener('click', () => {
-            cartModal.style.display = 'none';
-        });
-    
-        dashboardLink.addEventListener('click', () => {
-            window.location.href = 'dashboard.html';
-        });
+            });
+        } else {
+            console.error('backToProductsButtonCart element not found!');
+        }
+
+        if (dashboardLink) {
+            dashboardLink.addEventListener('click', () => {
+                window.location.href = "/dashboard/";
+            });
+        } else {
+            console.error('dashboardLink element not found!');
+        }
+
+        // Initial call to display products
+        if (displayedProducts.length > 0) {
+            displayProducts(displayedProducts);
+        } else if (allProducts.length > 0) {
+            displayProducts(allProducts);
+        } else {
+            productGrid.innerHTML = '<p>No architecture items listed yet.</p>';
+        }
     </script>
 
 </body>

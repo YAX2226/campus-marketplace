@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Product,Category
+from .models import Product, Category
 from django.http import JsonResponse
 
 
@@ -17,10 +17,10 @@ def dashboard(request):
 
 def architecture_buy(request):
     try:
-        category = Category.objects.get(name='architecture')
+        category = Category.objects.get(name__iexact='architecture')
         products = Product.objects.filter(category=category)
     except Category.DoesNotExist:
-        products = []  # or handle error
+        products = []
     return render(request, 'architecture_buy.html', {'products': products})
 
 def architecture_sell(request):
@@ -28,10 +28,10 @@ def architecture_sell(request):
 
 def engineering_buy(request):
     try:
-        category = Category.objects.get(name='engineering')
+        category = Category.objects.get(name__iexact='engineering')
         products = Product.objects.filter(category=category)
     except Category.DoesNotExist:
-        products = []  # or handle error
+        products = []
     return render(request, 'engineering_buy.html', {'products': products})
 
 def engineering_sell(request):
@@ -39,18 +39,29 @@ def engineering_sell(request):
 
 def pharmacy_buy(request):
     try:
-        category = Category.objects.get(name='pharmacy')
+        category = Category.objects.get(name__iexact='pharmacy')
         products = Product.objects.filter(category=category)
     except Category.DoesNotExist:
-        products = []  # or handle error
+        products = []
     return render(request, 'pharmacy_buy.html', {'products': products})
 
 def pharmacy_sell(request):
     return render(request, 'pharmacy_sell.html')
 
 
+# ✅ Updated API view with category filtering
 def product_list(request):
-    products = Product.objects.all()
+    category_name = request.GET.get('category')
+
+    if category_name:
+        try:
+            category = Category.objects.get(name__iexact=category_name)
+            products = Product.objects.filter(category=category)
+        except Category.DoesNotExist:
+            products = []
+    else:
+        products = Product.objects.all()
+
     data = []
     for product in products:
         data.append({
@@ -62,4 +73,5 @@ def product_list(request):
             'email': product.email,
             'category': product.category.name
         })
+
     return JsonResponse(data, safe=False)
